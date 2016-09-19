@@ -35,14 +35,24 @@ public class ByteUtil {
         return stringBuilder.toString();
     }
 
-    public static int convertFourBytesToInt(byte[] bytes) {
+    public static int bytesToInt(byte[] bytes) {
         return bytes[0] << 24 | (bytes[1] & 0xFF) << 16 | (bytes[2] & 0xFF) << 8 | (bytes[3] & 0xFF);
     }
 
-    public static byte[] convertIntToFourBytes(int value) {
+    public static byte[] intToBytes(int value) {
         return new byte[] {
                 (byte)(value >> 24),
                 (byte)(value >> 16),
+                (byte)(value >> 8),
+                (byte)value };
+    }
+
+    public static int bytesToshort(byte[] bytes) {
+        return bytes[0] << 8 | (bytes[1] & 0xFF);
+    }
+
+    public static byte[] shortToBytes(int value) {
+        return new byte[] {
                 (byte)(value >> 8),
                 (byte)value };
     }

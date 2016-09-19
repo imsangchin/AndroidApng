@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void bindApngImageView() {
         try {
-            InputStream inputStream = getAssets().open("elephant.png");
+            InputStream inputStream = getAssets().open("bell.png");
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             int length;
             byte[] buffer = new byte[4096];
@@ -38,12 +38,9 @@ public class MainActivity extends AppCompatActivity {
             Log.e("Mian", "originalImageBytes size: " + originalImageBytes.length);
 
             ApngParser apngEntity = new ApngParser(originalImageBytes);
-//            FrameEntity frameEntity = apngEntity.getFrameList().get(0);
-
-//            Bitmap bitmap = BitmapFactory.decodeByteArray(originalImageBytes, 0, originalImageBytes.length);
             ImageView imageView = (ImageView) findViewById(R.id.activityMain_apngImageView);
             Log.e("Mian", "apng frame list size: " + apngEntity.getFrameList().size());
-            imageView.setImageBitmap(apngEntity.generateImageBitmap(apngEntity.getFrameList().get(0)));
+            imageView.setImageBitmap(apngEntity.generateImageDataBitmap(apngEntity.getFrameList().get(0).getFrameDataChunk()));
 
         } catch (IOException e) {
             e.printStackTrace();

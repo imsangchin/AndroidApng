@@ -4,23 +4,23 @@ package com.shark.androidapng.entity;
  * Created by Shark0 on 2016/9/13.
  */
 public class FrameEntity {
-    private byte[] fctlBytes;
+    private ChunkEntity frameControlChunk;
 
-    private byte[] idatBytes;
+    private ChunkEntity frameDataChunk;
 
-    public byte[] getFctlBytes() {
-        return fctlBytes;
+    public ChunkEntity getFrameControlChunk() {
+        return frameControlChunk;
     }
 
-    public void setFctlBytes(byte[] fctlBytes) {
-        this.fctlBytes = fctlBytes;
+    public void setFrameControlChunk(ChunkEntity frameControlChunk) {
+        this.frameControlChunk = frameControlChunk;
     }
 
-    public byte[] getIdatBytes() {
-        return idatBytes;
+    public ChunkEntity getFrameDataChunk() {
+        return frameDataChunk;
     }
 
-    public void setIdatBytes(byte[] idatBytes) {
-        this.idatBytes = idatBytes;
+    public void setFrameDataChunk(ChunkEntity frameDataChunk) {
+        this.frameDataChunk = frameDataChunk;
     }
 }
