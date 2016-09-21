@@ -4,15 +4,15 @@ package com.shark.androidapng.entity;
  * Created by Shark0 on 2016/9/13.
  */
 public class FrameEntity {
-    private ChunkEntity frameControlChunk;
+    private FctlChunkEntity frameControlChunk;
 
     private ChunkEntity frameDataChunk;
 
-    public ChunkEntity getFrameControlChunk() {
+    public FctlChunkEntity getFrameControlChunk() {
         return frameControlChunk;
     }
 
-    public void setFrameControlChunk(ChunkEntity frameControlChunk) {
+    public void setFrameControlChunk(FctlChunkEntity frameControlChunk) {
         this.frameControlChunk = frameControlChunk;
     }
 

@@ -2,6 +2,7 @@ package com.shark.androidapng.entity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.util.Log;
 
 import com.shark.androidapng.util.ByteUtil;
@@ -28,7 +29,7 @@ public class ApngParser {
     public static final byte[] FDAT_TAG_BYTES = new byte[]{(byte) 0x66, (byte) 0x64, (byte) 0x41, (byte) 0x54};
 
     private final String IHDR_TAG = "IHDR";
-    private final String PLTE_TAG = "PLTE_TAG";
+    private final String PLTE_TAG = "PLTE";
     private final String ACTL_TAG = "acTL";
     private final String IDAT_TAG = "IDAT";
     private final String FCTL_TAG = "fcTL";
@@ -46,6 +47,7 @@ public class ApngParser {
     private final int CHUNK_CRC_BYTES_LENGTH = 4;
 
     private byte[] imageBytes;
+    private Bitmap bitmap;
     private boolean isApng;
 
     private ChunkEntity ihdrChunkEntity;
@@ -56,6 +58,8 @@ public class ApngParser {
     private int frameCount;
     private int repeatCount;
 
+    private ChunkEntity idatChunkEntity;
+
     private List<FrameEntity> frameList = new LinkedList<>();
 
     private ChunkEntity iendChunkEntity;
@@ -64,6 +68,8 @@ public class ApngParser {
 
     public ApngParser(byte[] imageBytes) {
         this.imageBytes = imageBytes;
+        bitmap =  BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+
         int actlIndex = ByteUtil.indexOf(imageBytes, ACTL_TAG_BYTES);
         isApng = actlIndex != -1;
         Log.e("Apng", "actlIndex: " + actlIndex);
@@ -78,25 +84,31 @@ public class ApngParser {
             byte[] lengthBytes = ByteUtil.subBytes(imageBytes,
                     chunkLengthStartIndex, chunkLengthEndIndex);
             int length = ByteUtil.bytesToInt(lengthBytes);
-//            Log.e("Apng", "i: " + i + ", length: "+ length);
+            Log.e("Apng", "i: " + i + ", length: "+ length);
 
             int tagStartIndex = chunkLengthEndIndex;
             int tagEndIndex = tagStartIndex + CHUNK_TAG_BYTES_LENGTH;
             byte[] tagBytes = ByteUtil.subBytes(imageBytes, tagStartIndex, tagEndIndex);
-//            Log.e("Apng", "i: " + i + ", chunkTag: "+ ByteUtil.bytesToHex(tagBytes));
+            Log.e("Apng", "i: " + i + ", chunkTag: "+ ByteUtil.bytesToHex(tagBytes));
             String tag = new String(tagBytes, StandardCharsets.UTF_8);
-//            Log.e("Apng", "i: " + i + ", chunkTag: "+ tag);
+            Log.e("Apng", "i: " + i + ", chunkTag: "+ tag);
 
             int dataStartIndex = tagEndIndex;
             int dataEndIndex = dataStartIndex + length;
             byte[] dataBytes = ByteUtil.subBytes(imageBytes, dataStartIndex, dataEndIndex);
-//            Log.e("Apng", "i: " + i + ", chunkData: "+ ByteUtil.bytesToHex(dataBytes));
+            Log.e("Apng", "i: " + i + ", chunkData: "+ ByteUtil.bytesToHex(dataBytes));
 
             int crcStartIndex = dataEndIndex;
             int crcEndIndex = crcStartIndex + CHUNK_CRC_BYTES_LENGTH;
             byte[] crcBytes = ByteUtil.subBytes(imageBytes, crcStartIndex, crcEndIndex);
-//            Log.e("Apng", "i: " + i + ", chunkCrc: "+ ByteUtil.bytesToHex(crcBytes));
-            ChunkEntity chunkEntity = new ChunkEntity();
+            Log.e("Apng", "i: " + i + ", chunkCrc: "+ ByteUtil.bytesToHex(crcBytes));
+            ChunkEntity chunkEntity;
+            if(tag.equalsIgnoreCase(FCTL_TAG)) {
+                chunkEntity = new FctlChunkEntity();
+            } else {
+                chunkEntity = new ChunkEntity();
+
+            }
             chunkEntity.setLengthBytes(lengthBytes);
             chunkEntity.setLength(length);
             chunkEntity.setTagBytes(tagBytes);
@@ -125,14 +137,11 @@ public class ApngParser {
 //                    Log.e("Apng", "repeatCount: " + repeatCount);
                     break;
                 case IDAT_TAG:
-                    FrameEntity frameEntity = new FrameEntity();
-                    frameEntity.setFrameControlChunk(chunkList.get(i - 1));
-                    frameEntity.setFrameDataChunk(chunkEntity);
-                    frameList.add(frameEntity);
+                    idatChunkEntity = chunkEntity;
                     break;
                 case FDAT_TAG:
-                    frameEntity = new FrameEntity();
-                    frameEntity.setFrameControlChunk(chunkList.get(i - 1));
+                    FrameEntity frameEntity = new FrameEntity();
+                    frameEntity.setFrameControlChunk((FctlChunkEntity) chunkList.get(i - 1));
                     frameEntity.setFrameDataChunk(chunkEntity);
                     frameList.add(frameEntity);
                     break;
@@ -155,7 +164,7 @@ public class ApngParser {
         bitmapChunkList.add(iendChunkEntity);
 
         int imageBytesSize = PNG_TAG_BYTES.length;
-        for(ChunkEntity chunkEntity: chunkList) {
+        for(ChunkEntity chunkEntity: bitmapChunkList) {
             imageBytesSize = imageBytesSize + chunkEntity.getLengthBytes().length + chunkEntity.getTag().length() +
                     chunkEntity.getDataBytes().length + chunkEntity.getCrcBytes().length;
         }
@@ -166,7 +175,7 @@ public class ApngParser {
             imageBytes[i ] = PNG_TAG_BYTES[i];
         }
         int startIndex = PNG_TAG_BYTES.length;
-        for(ChunkEntity chunkEntity: chunkList) {
+        for(ChunkEntity chunkEntity: bitmapChunkList) {
             for(int i = 0; i < chunkEntity.getLengthBytes().length; i ++) {
                 imageBytes[i + startIndex] = chunkEntity.getLengthBytes()[i];
             }
@@ -193,6 +202,17 @@ public class ApngParser {
 
         return bitmap;
     }
+    public Bitmap generateFrameDataBitmap(FrameEntity frameEntity) {
+        FctlChunkEntity fctlChunkEntity = frameEntity.getFrameControlChunk();
+        ChunkEntity frameDataChunkEntity = frameEntity.getFrameDataChunk();
+
+        Bitmap frameBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas frameCanvas = new Canvas(frameBitmap);
+        frameCanvas.drawBitmap(bitmap, 0 ,0 , null);
+
+        return frameBitmap;
+    }
+
 
     public boolean isApng() {
         return isApng;
@@ -224,5 +244,53 @@ public class ApngParser {
 
     public void setFrameList(List<FrameEntity> frameList) {
         this.frameList = frameList;
+    }
+
+    public ChunkEntity getIhdrChunkEntity() {
+        return ihdrChunkEntity;
+    }
+
+    public void setIhdrChunkEntity(ChunkEntity ihdrChunkEntity) {
+        this.ihdrChunkEntity = ihdrChunkEntity;
+    }
+
+    public ChunkEntity getPlteChunkEntity() {
+        return plteChunkEntity;
+    }
+
+    public void setPlteChunkEntity(ChunkEntity plteChunkEntity) {
+        this.plteChunkEntity = plteChunkEntity;
+    }
+
+    public ChunkEntity getActlChunkEntity() {
+        return actlChunkEntity;
+    }
+
+    public void setActlChunkEntity(ChunkEntity actlChunkEntity) {
+        this.actlChunkEntity = actlChunkEntity;
+    }
+
+    public ChunkEntity getIdatChunkEntity() {
+        return idatChunkEntity;
+    }
+
+    public void setIdatChunkEntity(ChunkEntity idatChunkEntity) {
+        this.idatChunkEntity = idatChunkEntity;
+    }
+
+    public ChunkEntity getIendChunkEntity() {
+        return iendChunkEntity;
+    }
+
+    public void setIendChunkEntity(ChunkEntity iendChunkEntity) {
+        this.iendChunkEntity = iendChunkEntity;
+    }
+
+    public List<ChunkEntity> getChunkList() {
+        return chunkList;
+    }
+
+    public void setChunkList(List<ChunkEntity> chunkList) {
+        this.chunkList = chunkList;
     }
 }
