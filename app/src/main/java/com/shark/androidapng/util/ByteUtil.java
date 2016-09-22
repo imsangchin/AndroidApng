@@ -67,4 +67,12 @@ public class ByteUtil {
         }
         return bytes;
     }
+
+    public static byte[] copyBytes(byte[] bytes) {
+        byte[] newBytes = new byte[bytes.length];
+        for(int i = 0; i < bytes.length; i ++) {
+            newBytes[i] = bytes[i];
+        }
+        return newBytes;
+    }
 }

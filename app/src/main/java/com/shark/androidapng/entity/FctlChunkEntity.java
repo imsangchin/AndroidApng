@@ -1,7 +1,5 @@
 package com.shark.androidapng.entity;
 
-import android.util.Log;
-
 import com.shark.androidapng.util.ByteUtil;
 
 /**
@@ -20,39 +18,39 @@ public class FctlChunkEntity extends ChunkEntity{
     private int blendOp;
 
     public void setDataBytes(byte[] dataBytes) {
-        Log.e("FctlChunk", "dataBytes: " + ByteUtil.bytesToHex(dataBytes));
+//        Log.e("FctlChunk", "dataBytes: " + ByteUtil.bytesToHex(dataBytes));
         byte[] sequenceNumberBytes = ByteUtil.subBytes(dataBytes, 0, 4);
         sequenceNumber = ByteUtil.bytesToInt(sequenceNumberBytes);
-        Log.e("FctlChunk", "sequenceNumberBytes: " + ByteUtil.bytesToHex(sequenceNumberBytes));
-        Log.e("FctlChunk", "sequenceNumber: " + sequenceNumber);
+//        Log.e("FctlChunk", "sequenceNumberBytes: " + ByteUtil.bytesToHex(sequenceNumberBytes));
+//        Log.e("FctlChunk", "sequenceNumber: " + sequenceNumber);
         byte[] widthBytes = ByteUtil.subBytes(dataBytes, 4, 8);
         width = ByteUtil.bytesToInt(widthBytes);
-        Log.e("FctlChunk", "widthBytes: " + ByteUtil.bytesToHex(widthBytes));
-        Log.e("FctlChunk", "width: " + width);
+//        Log.e("FctlChunk", "widthBytes: " + ByteUtil.bytesToHex(widthBytes));
+//        Log.e("FctlChunk", "width: " + width);
         byte[] heightBytes = ByteUtil.subBytes(dataBytes, 8, 12);
         height = ByteUtil.bytesToInt(heightBytes);
-        Log.e("FctlChunk", "heightBytes: " + ByteUtil.bytesToHex(heightBytes));
-        Log.e("FctlChunk", "height: " + height);
+//        Log.e("FctlChunk", "heightBytes: " + ByteUtil.bytesToHex(heightBytes));
+//        Log.e("FctlChunk", "height: " + height);
         byte[] xOffsetBytes = ByteUtil.subBytes(dataBytes, 12, 16);
         xOffset = ByteUtil.bytesToInt(xOffsetBytes);
-        Log.e("FctlChunk", "xOffsetBytes: " + ByteUtil.bytesToHex(xOffsetBytes));
-        Log.e("FctlChunk", "xOffset: " + xOffset);
+//        Log.e("FctlChunk", "xOffsetBytes: " + ByteUtil.bytesToHex(xOffsetBytes));
+//        Log.e("FctlChunk", "xOffset: " + xOffset);
         byte[] yOffsetBytes = ByteUtil.subBytes(dataBytes, 16, 20);
         yOffset = ByteUtil.bytesToInt(yOffsetBytes);
-        Log.e("FctlChunk", "yOffsetBytes: " + ByteUtil.bytesToHex(yOffsetBytes));
-        Log.e("FctlChunk", "yOffset: " + yOffset);
+//        Log.e("FctlChunk", "yOffsetBytes: " + ByteUtil.bytesToHex(yOffsetBytes));
+//        Log.e("FctlChunk", "yOffset: " + yOffset);
         byte[] delayNumberBytes = ByteUtil.subBytes(dataBytes, 20, 22);
         delayNumber = ByteUtil.bytesToshort(delayNumberBytes);
-        Log.e("FctlChunk", "delayNumberBytes: " + ByteUtil.bytesToHex(delayNumberBytes));
-        Log.e("FctlChunk", "delayNumber: " + delayNumber);
+//        Log.e("FctlChunk", "delayNumberBytes: " + ByteUtil.bytesToHex(delayNumberBytes));
+//        Log.e("FctlChunk", "delayNumber: " + delayNumber);
         byte[] delayDenBytes = ByteUtil.subBytes(dataBytes, 22, 24);
         delayDen = ByteUtil.bytesToshort(delayDenBytes);
-        Log.e("FctlChunk", "delayDenBytes: " + ByteUtil.bytesToHex(delayDenBytes));
-        Log.e("FctlChunk", "delayDen: " + delayDen);
+//        Log.e("FctlChunk", "delayDenBytes: " + ByteUtil.bytesToHex(delayDenBytes));
+//        Log.e("FctlChunk", "delayDen: " + delayDen);
         disposeOp = dataBytes[24];
-        Log.e("FctlChunk", "disposeOp: " + blendOp);
+//        Log.e("FctlChunk", "disposeOp: " + blendOp);
         blendOp = dataBytes[25];
-        Log.e("FctlChunk", "blendOp: " + blendOp);
+//        Log.e("FctlChunk", "blendOp: " + blendOp);
         super.setDataBytes(dataBytes);
     }
 

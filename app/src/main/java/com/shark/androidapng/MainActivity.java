@@ -36,12 +36,10 @@ public class MainActivity extends AppCompatActivity {
             byteArrayOutputStream.flush();
             byte[] originalImageBytes = byteArrayOutputStream.toByteArray();
             Log.e("Mian", "originalImageBytes size: " + originalImageBytes.length);
-
-            ApngParser apngEntity = new ApngParser(originalImageBytes);
+            ApngParser apngParser = new ApngParser(originalImageBytes);
             ImageView imageView = (ImageView) findViewById(R.id.activityMain_apngImageView);
-            Log.e("Mian", "apng frame list size: " + apngEntity.getFrameList().size());
-            imageView.setImageBitmap(apngEntity.generateImageDataBitmap(apngEntity.getIdatChunkEntity()));
-
+            Log.e("Mian", "apng frame list size: " + apngParser.getFrameList().size());
+            imageView.setImageBitmap(apngParser.generateFrameDataBitmap(apngParser.getFrameList().get(20)));
         } catch (IOException e) {
             e.printStackTrace();
         }
