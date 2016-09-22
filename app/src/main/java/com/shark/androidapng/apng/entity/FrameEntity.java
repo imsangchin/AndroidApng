@@ -1,4 +1,4 @@
-package com.shark.androidapng.entity;
+package com.shark.androidapng.apng.entity;
 
 /**
  * Created by Shark0 on 2016/9/13.

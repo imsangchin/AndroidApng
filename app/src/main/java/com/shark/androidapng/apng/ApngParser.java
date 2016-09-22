@@ -1,8 +1,14 @@
-package com.shark.androidapng.entity;
+package com.shark.androidapng.apng;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+
+import com.shark.androidapng.apng.entity.ActlChunkEntity;
+import com.shark.androidapng.apng.entity.ChunkEntity;
+import com.shark.androidapng.apng.entity.FctlChunkEntity;
+import com.shark.androidapng.apng.entity.FrameEntity;
+import com.shark.androidapng.apng.entity.IhdrChunkEntity;
 import com.shark.androidapng.util.ByteUtil;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
@@ -49,9 +55,11 @@ public class ApngParser {
     private ActlChunkEntity actlChunkEntity;
 
     private List<FrameEntity> frameList = new LinkedList<>();
+    private List<ChunkEntity> unknowChunkList = new LinkedList<>();
 
     private ChunkEntity iendChunkEntity;
     private List<ChunkEntity> chunkList = new LinkedList<>();
+
 
 
     public ApngParser(byte[] imageBytes) {
@@ -157,6 +165,9 @@ public class ApngParser {
                 case IEND_TAG:
                     iendChunkEntity = chunkEntity;
                     break;
+                default:
+                    unknowChunkList.add(chunkEntity);
+                    break;
             }
             chunkLengthStartIndex = crcEndIndex;
             i = i + 1;
@@ -176,6 +187,7 @@ public class ApngParser {
         if(plteChunkEntity != null) {
             bitmapChunkList.add(plteChunkEntity);
         }
+        bitmapChunkList.addAll(unknowChunkList);
         bitmapChunkList.add(frameDataChunkEntity);
         bitmapChunkList.add(iendChunkEntity);
 
@@ -212,8 +224,9 @@ public class ApngParser {
 
         Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
         if(debug) {
-            Log.e("Apng", "imageBytes: " + ByteUtil.bytesToHex(imageBytes));
-            Log.e("Apng", "isBitmapNull: " + (bitmap == null));
+            Log.e("Apng", "generateFrameDataBitmap ihdr colour type: " + ihdrChunkEntity.getColourType());
+            Log.e("Apng", "generateFrameDataBitmap image bytes: " + ByteUtil.bytesToHex(imageBytes));
+            Log.e("Apng", "generateFrameDataBitmap is bitmap: " + (bitmap != null));
         }
         return bitmap;
     }

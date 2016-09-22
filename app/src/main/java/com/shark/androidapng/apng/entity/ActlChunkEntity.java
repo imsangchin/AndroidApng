@@ -1,4 +1,4 @@
-package com.shark.androidapng.entity;
+package com.shark.androidapng.apng.entity;
 
 import com.shark.androidapng.util.ByteUtil;
 

@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.shark.androidapng.entity.ApngParser;
+import com.shark.androidapng.apng.ApngParser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
