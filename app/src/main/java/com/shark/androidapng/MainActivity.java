@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             ApngParser apngParser = new ApngParser(originalImageBytes);
             ImageView imageView = (ImageView) findViewById(R.id.activityMain_apngImageView);
             Log.e("Mian", "apng frame list size: " + apngParser.getFrameList().size());
-            imageView.setImageBitmap(apngParser.generateFrameDataBitmap(apngParser.getFrameList().get(20)));
+            imageView.setImageBitmap(apngParser.generateFrameDataBitmap(apngParser.getFrameList().get(10)));
         } catch (IOException e) {
             e.printStackTrace();
         }
